@@ -9,7 +9,7 @@ clips = {
   'hands@out@generic@ps@clip', 
   'hands@out@low@ds@clip', 
   'hands@out@low@ps@clip'}
-  
+
 Citizen.CreateThread(function()
   while true do
     if IsControlPressed(1, 289) then
