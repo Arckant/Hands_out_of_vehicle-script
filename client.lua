@@ -9,14 +9,14 @@ clips = {
   'hands@out@generic@ps@clip', 
   'hands@out@low@ds@clip', 
   'hands@out@low@ps@clip'}
-
+  
 Citizen.CreateThread(function()
   while true do
-    if IsControlPressed(1, 289) then
+    if IsControlPressed(1, 289) then --F2 - Skip animation
       ClearPedTasks(player);
     end
 
-    if IsControlJustPressed(1, 288) then
+    if IsControlJustPressed(1, 288) then --F1 - Start animation
       if IsPedSittingInAnyVehicle(player) then
         RequestAnimDict(emotes[anim_type()])
         while not HasAnimDictLoaded(emotes[anim_type()]) do
@@ -24,11 +24,6 @@ Citizen.CreateThread(function()
         end
         TaskPlayAnim(player, emotes[anim_type()], clips[anim_type()], 4.0, 4.0, -1, 1, 0.0)
         RemoveAnimDict(emotes[anim_type()])
-        TriggerEvent('chat:addMessage', {
-          color = { 255, 0, 0},
-          multiline = true,
-          args = {emotes[anim_type()], clips[anim_type()]}
-        })
       end
     end
     RemoveAnimDict(emotes[anim_type()])
@@ -60,6 +55,6 @@ function anim_type()
     end
     return 2;
   else
-    return error
+    return 0
   end
 end
