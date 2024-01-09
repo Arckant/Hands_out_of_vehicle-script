@@ -1,60 +1,67 @@
-player = GetPlayerPed()
-emotes = {
-  'hands@out@generic@ds', 
-  'hands@out@generic@ps', 
-  'hands@out@low@ds', 
-  'hands@out@low@ps'}
-clips = {
-  'hands@out@generic@ds@clip', 
-  'hands@out@generic@ps@clip', 
-  'hands@out@low@ds@clip', 
-  'hands@out@low@ps@clip'}
-  
-Citizen.CreateThread(function()
-  while true do
-    if IsControlPressed(1, 289) then --F2 - Skip animation
-      ClearPedTasks(player);
-    end
+local veh_class = {
+	'0', --Compacts
+	'1', --Sedans
+	'2', --SUVs
+	'3', --Coupes
+	'4', --Muscle
+	'5', --Sports Classics
+	'6', --Sports
+	'7', --Super
+	--'8', --Motorcycles
+	'9', --Off-Road
+	'10', --Industrial
+	'11', --Utility
+	'12', --Vans
+	--'13', --Cycles
+	--'14', --Boats
+	--'15', --Helicopters
+	--'16', --Planes
+	'17', --Service
+	'18', --Emergency
+	'19', --Military
+	'20', --Commercial
+	--'21', --Trains
+	--'22' --Open Wheels
+}
 
-    if IsControlJustPressed(1, 288) then --F1 - Start animation
-      if IsPedSittingInAnyVehicle(player) then
-        RequestAnimDict(emotes[anim_type()])
-        while not HasAnimDictLoaded(emotes[anim_type()]) do
-          Wait(1)
-        end
-        TaskPlayAnim(player, emotes[anim_type()], clips[anim_type()], 4.0, 4.0, -1, 1, 0.0)
-        RemoveAnimDict(emotes[anim_type()])
-      end
+local seat_anim = {
+	[-1] = 'hands@out@low@ds@clip',
+	[0] = 'hands@out@low@ps@clip',
+	[1] = 'hands@out@low@ds@clip',
+	[2] = 'hands@out@low@ps@clip',
+}
+
+function table.contains(table, element)
+  for _, value in pairs(table) do
+    if value == element then
+      return true
     end
-    RemoveAnimDict(emotes[anim_type()])
-    Citizen.Wait(1)
   end
-end)
+  return false
+end
 
-
-
-function anim_type()
+function seat(player)
   if player == GetPedInVehicleSeat(GetVehiclePedIsIn(player), -1) then
-    if GetVehicleClass(GetVehiclePedIsIn(player)) == 7 then
-      return 3;
-    end
-    return 1;
+    return -1;
   elseif player == GetPedInVehicleSeat(GetVehiclePedIsIn(player), 0) then
-    if GetVehicleClass(GetVehiclePedIsIn(player)) == 7 then
-      return 4;
-    end
-    return 2;
+    return 0;
   elseif player == GetPedInVehicleSeat(GetVehiclePedIsIn(player), 1) then
-    if GetVehicleClass(GetVehiclePedIsIn(player)) == 7 then
-      return 3
-    end
     return 1;
   elseif player == GetPedInVehicleSeat(GetVehiclePedIsIn(player), 2) then
-    if GetVehicleClass(GetVehiclePedIsIn(player)) == 7 then
-      return 4;
-    end
     return 2;
   else
-    return 0
+    return nil
   end
 end
+
+RegisterCommand('Hands_out_of_vehicle', function(source)
+	if IsControlJustPressed(1, 288) then --F1 - Start animation
+		if IsPedSittingInAnyVehicle(GetPlayerPed(source)) and table.contains(veh_class, tostring(GetVehicleClass(GetVehiclePedIsIn(GetPlayerPed(source))))) then
+			RequestAnimDict('hands_out_of_vehicle')
+			while not HasAnimDictLoaded('hands_out_of_vehicle') do
+				Wait(1)
+			end
+			TaskPlayAnim(GetPlayerPed(source), 'hands_out_of_vehicle', seat_anim[seat(GetPlayerPed(source))], 4.0, 4.0, -1, 17, 0.0)
+			RemoveAnimDict('hands_out_of_vehicle')
+		end
+end)
