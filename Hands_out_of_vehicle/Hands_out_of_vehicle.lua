@@ -22,6 +22,7 @@ local veh_class = {
 	'20', --Commercial
 	--'21', --Trains
 	--'22' --Open Wheels
+
 }
 
 local seat_anim = {
@@ -55,13 +56,12 @@ function seat(player)
 end
 
 RegisterCommand('Hands_out_of_vehicle', function(source)
-	if IsControlJustPressed(1, 288) then --F1 - Start animation
-		if IsPedSittingInAnyVehicle(GetPlayerPed(source)) and table.contains(veh_class, tostring(GetVehicleClass(GetVehiclePedIsIn(GetPlayerPed(source))))) then
-			RequestAnimDict('hands_out_of_vehicle')
-			while not HasAnimDictLoaded('hands_out_of_vehicle') do
-				Wait(1)
-			end
-			TaskPlayAnim(GetPlayerPed(source), 'hands_out_of_vehicle', seat_anim[seat(GetPlayerPed(source))], 4.0, 4.0, -1, 17, 0.0)
-			RemoveAnimDict('hands_out_of_vehicle')
+	if IsPedSittingInAnyVehicle(GetPlayerPed(source)) and table.contains(veh_class, tostring(GetVehicleClass(GetVehiclePedIsIn(GetPlayerPed(source))))) then
+		RequestAnimDict('hands_out_of_vehicle')
+		while not HasAnimDictLoaded('hands_out_of_vehicle') do
+			Wait(1)
 		end
+		TaskPlayAnim(GetPlayerPed(source), 'hands_out_of_vehicle', seat_anim[seat(GetPlayerPed(source))], 4.0, 4.0, -1, 17, 0.0)
+		RemoveAnimDict('hands_out_of_vehicle')
+	end
 end)
